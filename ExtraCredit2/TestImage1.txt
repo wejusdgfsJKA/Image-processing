@@ -1,4 +1,5 @@
 P2
+#this is a test image
 4 4
 255
 1 1 1 7

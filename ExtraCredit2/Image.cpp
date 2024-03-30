@@ -2,9 +2,9 @@
 #include<fstream>
 #include <string>
 #include<stdlib.h>
+#include <iostream>
 using std::string;
 using std::cout;
-
 Image Image::zeros(unsigned int width, unsigned int height) {
 	return Image(width, height);
 }
@@ -68,36 +68,49 @@ Image::~Image() {
 }
 
 bool Image::load(string imagePath) {
+	
 	if (imagePath.length() == 0)return false;
 	std::ifstream file(imagePath);
 	string str;
-	int line = 0;
 	std::getline(file, str);
+
 	if (str.compare("P2") != 0) {
 		return false;
 	}
+
 	bool read_size = false;
 	bool read_intensity = false;
+
 	int new_width = 0, new_height = 0, new_intensity = 0;
 	Image new_image;
+	int line = 0;
+	int c = 0;
+
 	while (std::getline(file, str)) {
 		if (str[0] != '#') {
 			//the line is not a comment
 			if (!read_size) {
 				//we try to read the size
-				size_t found = str.find_first_of(' ');
-				if (found == string::npos ||found==0) return false;
-				string w = str.substr(0, found);
-				if (w.find_first_not_of("0123456789") == string::npos) {
-					new_width = std::stoi(w);
+				int i = 0;
+				int counter = 0;
+				while (i < str.length()) {
+					if (!isdigit(str[i]) && str[i] != ' ')return false;
+					if (isdigit(str[i]) && (i == 0 || !isdigit(str[i - 1]))) {
+						//found a nr
+						counter++;
+						if (counter > 2)return false;
+						int j = i;
+						while (j < str.length() && isdigit(str[j]))j++;
+						if (counter == 1) {
+							new_width = std::stoi(str.substr(i, j - i));
+						}
+						else {
+							new_height = std::stoi(str.substr(i, j - i));
+						}
+						i = j + 1;
+					}
+					else i++;
 				}
-				else return false;
-				string h = str.substr(found + 1, str.length() - 1);
-				if (h.length() == 0)return false;
-				if (h.find_first_not_of("0123456789") == string::npos) {
-					new_height = std::stoi(h);
-				}
-				else return false;
 				read_size = true;
 			}
 			else if (!read_intensity) {
@@ -108,29 +121,39 @@ bool Image::load(string imagePath) {
 				else return false;
 				read_intensity = true;
 				new_image = Image(new_width, new_height);
+				int a = 0;
 			}
 			else {
 				//we now read the image
-				if (str.find_first_not_of(" 0123456789") != string::npos)return false;
-				for (int i = 0; i < new_width; i++) {
-					size_t found = str.find_first_of(' ');
-					string s = str.substr(0, found);
-					if (s.length() == 0)return false;
-					if (s.find_first_not_of(" 0123456789") != string::npos)return false;
-					int a = std::stoi(s);
-					if (a > new_intensity)return false;
-					new_image.at(i, line) = a;
-					int j = found;
-					if (j >= str.length()) str = "";
-					else
-					str = str.substr(j + 1, str.length());
+				if (line < new_height)
+				{
+					int i = 0;
+					while (i < str.length()) {
+						if (!isdigit(str[i]) && str[i] != ' ')return false;
+						if (isdigit(str[i]) && (i == 0 || !isdigit(str[i - 1]))) {
+							//found a nr
+							int j = i;
+							while (j < str.length() && isdigit(str[j]))j++;
+							if (j != i)
+							{
+								int a = std::stoi(str.substr(i, j - i)); int L = line; int C = c;
+								if (a > new_intensity)return false;
+								new_image.at(c, line) = a;
+								c++;
+								if (c == new_width) {
+									line++;
+									c = 0;
+								}
+							}
+							i = j + 1;
+						}
+						else i++;
+					}
 				}
-				line++;
 			}
 		}
 	}
 	if (!read_size || !read_intensity)return false;
-	if (line < new_height)return false;
 	*this = new_image;
 	return true;
 }
@@ -138,15 +161,16 @@ bool Image::load(string imagePath) {
 bool Image::save(string imagePath) const {
 	if (imagePath.length() == 0)return false;
 	std::ofstream file(imagePath);
-	file << "P2\n" << m_width << " " << m_height << "\n255";
+	file << "P2\n" << m_width << "  " << m_height << "\n255";
 	if (m_width > 0)
 	{
 		for (int i = 0; i < m_height; i++) {
 			file << "\n";
 			file << int(m_data[i][0]);
 			for (int j = 1; j < m_width; j++) {
-				file << " " << int(m_data[i][j]);
+				file << "  " << int(m_data[i][j]);
 			}
+			file << " ";
 		}
 	}
 	return true;
@@ -208,8 +232,10 @@ bool Image::getROI(Image& roiImg, unsigned int x, unsigned int y, unsigned int w
 	roiImg = Image(width, height);
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
-			int a = i + abs(int(x) - int(m_height))-1;
-			roiImg.at(j, i) = int(m_data[i + abs(int(y) - int(m_height))-1][j + x]);
+			int I = i + abs(int(y) - int(m_height)) - 1;
+			int Y = j + x;
+			int a = int(m_data[i + abs(int(y) - int(m_height)) - 1][j + x]);
+			roiImg.at(j, i) = a;
 		}
 	}
 	return true;
