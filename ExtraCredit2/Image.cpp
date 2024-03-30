@@ -246,7 +246,7 @@ bool Image::isEmpty() const{
 }
 
 Size Image::size() const{
-	return Size(m_width, m_height);
+	return Size{m_width, m_height};
 }
 
 unsigned int Image::width() const {

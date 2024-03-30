@@ -1,17 +1,22 @@
 #include "ImageConvolution.h"
 #include<iostream>
 using std::cout;
-
-ImageConvolution::ImageConvolution(ScaleFct scale, const Image& kernel) {
+#define kwidth 3
+#define kheight 3
+ImageConvolution::ImageConvolution(ScaleFct scale, const int kernel[3][3]) {
 	this->scale = scale;
-	this->kernel = kernel;
+	for (int i = 0; i < kheight; i++) {
+		for (int j = 0; j < kwidth; j++) {
+			this->kernel[i][j] = kernel[i][j];
+		}
+	}
 }
 
-int ImageConvolution::Convolve(Image& roi) {
+int ImageConvolution::Convolve(Image& roi) const{
 	int s = 0;
 	for (unsigned int i = 0; i < roi.height(); i++) {
 		for (unsigned int j = 0; j < roi.width(); j++) {
-			s += kernel.at(j, i) * roi.at(j, i);
+			s += kernel[i][j] * roi.at(j, i);
 		}
 	}
 	return scale(s);
@@ -19,13 +24,11 @@ int ImageConvolution::Convolve(Image& roi) {
 
 void ImageConvolution::process(const Image& src, Image& dst) {
 	Image dummy{ src }, temp;
-	dst = Image(src.width() - (kernel.width() - 1), src.height() - (kernel.height() - 1));
-	for (unsigned int i = 1; i < src.height() - kernel.height() / 2; i++) {
-		for (unsigned int j = 1; j < src.width() - kernel.width() / 2; j++) {
-			//int a = j - kernel.width() / 2;
-			//int b = src.height() - kernel.height() / 2 - i + 1;
-			dummy.getROI(temp, j - kernel.width() / 2, src.height() - kernel.height() / 2 - i + 1, kernel.width(), kernel.height());
-			dst.at(j - kernel.width() / 2, i - kernel.height() / 2) = Convolve(temp);
+	dst = Image(src.width() - (kwidth - 1), src.height() - (kheight - 1));
+	for (unsigned int i = 1; i < src.height() - kheight / 2; i++) {
+		for (unsigned int j = 1; j < src.width() - kwidth / 2; j++) {
+			dummy.getROI(temp, j - kwidth / 2, src.height() - kheight / 2 - i + 1, kwidth, kheight);
+			dst.at(j - kwidth / 2, i - kheight / 2) = Convolve(temp);
 		}
 	}
 }
