@@ -1,7 +1,7 @@
 #pragma once
 #include<ostream>
-#include<iostream>
 #include "Point.h"
+
 using std::ostream;
 class Rectangle {
 public:
@@ -22,6 +22,7 @@ public:
 	Rectangle operator&(const Rectangle& other)const;
 	Rectangle operator|(const Rectangle& other)const;
 	friend ostream& operator<<(ostream& os, const Rectangle& r);
+
 private:
 	int x, y;
 	int width, height;

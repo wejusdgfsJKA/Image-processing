@@ -2,6 +2,7 @@
 #include <ostream>
 #include "Rectangle.h"
 #include "Size.h"
+
 class Image
 {
 public:
@@ -29,9 +30,8 @@ public:
 	friend std::istream& operator>>(std::istream& is, Image& dt);
 	static Image zeros(unsigned int width, unsigned int height);
 	static Image ones(unsigned int width, unsigned int height);
-	unsigned char** m_data;
 private:
-	
+	unsigned char** m_data;
 	unsigned int m_width;
 	unsigned int m_height;
 };
