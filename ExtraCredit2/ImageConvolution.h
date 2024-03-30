@@ -6,12 +6,12 @@ typedef int (*ScaleFct)(int input);
 class ImageConvolution : public ImageProcessing {
 
 public:
-	ImageConvolution(ScaleFct scale, const Image& kernel);
+	ImageConvolution(ScaleFct scale, const int kernel[3][3]);
 	void process(const Image& src, Image& dst);
 	
 
 private:
-	Image kernel;
-	int Convolve(Image& roi);
+	int kernel[3][3];
+	int Convolve(Image& roi)const;
 	ScaleFct scale;
 };

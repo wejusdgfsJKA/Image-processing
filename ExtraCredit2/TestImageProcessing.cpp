@@ -3,8 +3,8 @@
 #include "ImageCorrection.h"
 #include "ImageConvolution.h"
 #include <assert.h>
-#include<iostream>
-using std::cout;
+#include <fstream>
+using std::ifstream;
 
 int IdentityScaling(int x) {
 	return x;
@@ -98,42 +98,50 @@ void TestImageCorrection() {
 void TestImageConvolution() {
 	
 	Image img;
-	Image kernel;
 	Image target;
 	Image expected;
-	
+	int kernel[3][3] = { 0 };
+
+	kernel[1][1] = 1;
 	expected.load("ConvolutedImage1.txt");
 	img.load("TestImage1.txt");
-	kernel.load("Kernel1.txt");
 	ImageConvolution conv = ImageConvolution(IdentityScaling, kernel);
 	conv.process(img, target);
-	assert(target.width() == img.width() - (kernel.width() - 1) && target.height() == img.height() - (kernel.height() - 1));
+	assert(target.width() == img.width() - 2 && target.height() == img.height() - 2);
 	for (unsigned int i = 0; i < target.height(); i++) {
 		for (unsigned int j = 0; j < target.width(); j++) {
 			assert(target.at(j, i) == expected.at(j, i));
 		}
 	}
 
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			kernel[i][j] = 1;
+		}
+	}
 	expected.load("ConvolutedImage2.txt");
 	img.load("TestImage2.txt");
-	kernel.load("MeanBlurKernel.txt");
 	conv = ImageConvolution(MeanBlurScaling, kernel);
 	conv.process(img, target);
-	assert(target.width() == img.width() - (kernel.width() - 1) && target.height() == img.height() - (kernel.height() - 1));
+	assert(target.width() == img.width() - 2 && target.height() == img.height() - 2);
 	for (unsigned int i = 0; i < target.height(); i++) {
 		for (unsigned int j = 0; j < target.width(); j++) {
 			assert(target.at(j, i) == expected.at(j, i));
 		}
 	}
 
+	kernel[0][1] = 0;
+	kernel[1][2] = 0;
+	kernel[2][1] = 0;
+	kernel[1][0] = 0;
 	expected.load("ConvolutedImage3.txt");
 	img.load("TestImage4.txt");
-	kernel.load("Kernel2.txt");
 	conv = ImageConvolution(IdentityScaling, kernel);
 	conv.process(img, target);
-	assert(target.width() == img.width() - (kernel.width() - 1) && target.height() == img.height() - (kernel.height() - 1));
+	assert(target.width() == img.width() - 2 && target.height() == img.height() - 2);
 	for (unsigned int i = 0; i < target.height(); i++) {
 		for (unsigned int j = 0; j < target.width(); j++) {
+			int a = target.at(j, i); int b = expected.at(j, i);
 			assert(target.at(j, i) == expected.at(j, i));
 		}
 	}
