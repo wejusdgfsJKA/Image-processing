@@ -6,7 +6,7 @@
 #include <fstream>
 using std::ifstream;
 
-int IdentityScaling(int x) {
+int IdScaling(int x) {
 	return x;
 }
 
@@ -105,7 +105,7 @@ void TestImageConvolution() {
 	kernel[1][1] = 1;
 	expected.load("ConvolutedImage1.txt");
 	img.load("TestImage1.txt");
-	ImageConvolution conv = ImageConvolution(IdentityScaling, kernel);
+	ImageConvolution conv = ImageConvolution(IdScaling, kernel);
 	conv.process(img, target);
 	assert(target.width() == img.width() - 2 && target.height() == img.height() - 2);
 	for (unsigned int i = 0; i < target.height(); i++) {
@@ -136,7 +136,7 @@ void TestImageConvolution() {
 	kernel[1][0] = 0;
 	expected.load("ConvolutedImage3.txt");
 	img.load("TestImage4.txt");
-	conv = ImageConvolution(IdentityScaling, kernel);
+	conv = ImageConvolution(IdScaling, kernel);
 	conv.process(img, target);
 	assert(target.width() == img.width() - 2 && target.height() == img.height() - 2);
 	for (unsigned int i = 0; i < target.height(); i++) {

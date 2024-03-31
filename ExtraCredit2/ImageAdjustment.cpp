@@ -1,13 +1,16 @@
 #include "ImageAdjustment.h"
+
 ImageAdjustment::ImageAdjustment() {
 	gain = 1;
 	bias = 0;
 }
+
 ImageAdjustment::ImageAdjustment(float gain,float bias) {
 	if (gain == 0)throw("Invalid gain!");
 	this->gain = gain;
 	this->bias = bias;
 }
+
 void ImageAdjustment::process(const Image& src, Image& dst) {
 	dst = Image(src);
 	for (unsigned int i = 0; i < dst.height(); i++) {
@@ -20,4 +23,12 @@ void ImageAdjustment::process(const Image& src, Image& dst) {
 			dst.at(j, i) = a;
 		}
 	}
+}
+
+float ImageAdjustment::get_gain()const {
+	return gain;
+}
+
+float ImageAdjustment::get_bias()const {
+	return bias;
 }

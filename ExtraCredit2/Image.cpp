@@ -161,18 +161,7 @@ bool Image::load(string imagePath) {
 bool Image::save(string imagePath) const {
 	if (imagePath.length() == 0)return false;
 	std::ofstream file(imagePath);
-	file << "P2\n" << m_width << "  " << m_height << "\n255";
-	if (m_width > 0)
-	{
-		for (int i = 0; i < m_height; i++) {
-			file << "\n";
-			file << int(m_data[i][0]);
-			for (int j = 1; j < m_width; j++) {
-				file << "  " << int(m_data[i][j]);
-			}
-			file << " ";
-		}
-	}
+	file << *this;
 	return true;
 }
 
@@ -209,11 +198,18 @@ Image Image::operator*(double s) {
 }
 
 bool Image::getROI(Image& roiImg, Rectangle roiRect) {
+	
+	if (roiRect.get_width() == 0 || roiRect.get_height() == 0) {
+		roiImg = Image();
+		return true;
+	}
+
 	unsigned int x = roiRect.get_x(), y = roiRect.get_y(), width = roiRect.get_width(), height = roiRect.get_height();
 	if (width < 1 || height < 1)return false;
 	if (y >= m_height || x >= m_width)return false;
 	if (height > m_height || width > m_width)return false;
-	if (abs(int(y) - int(height)) > m_height || abs(int(x) - int(width)) > m_width)return false;
+	if (abs(int(y) - int(height)) > m_height || abs(int(x) + int(width)) > m_width)return false;
+	
 	roiImg = Image(width, height);
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
@@ -225,10 +221,17 @@ bool Image::getROI(Image& roiImg, Rectangle roiRect) {
 }
 
 bool Image::getROI(Image& roiImg, unsigned int x, unsigned int y, unsigned int width, unsigned int height) {
+	
+	if (width == 0 or height == 0) {
+		roiImg = Image();
+		return true;
+	}
+
 	if (width < 1 || height < 1)return false;
 	if (y >= m_height || x >= m_width)return false;
 	if (height > m_height || width > m_width)return false;
-	if (abs(int(y) - int(height)) > m_height || abs(int(x) - int(width)) > m_width)return false;
+	if (abs(int(y) - int(height)) > m_height || abs(int(x) + int(width)) > m_width)return false;
+	if (m_height - y + height - 2 > m_height)return false;
 	roiImg = Image(width, height);
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
@@ -246,7 +249,7 @@ bool Image::isEmpty() const{
 }
 
 Size Image::size() const{
-	return Size{m_width, m_height};
+	return Size(m_width, m_height);
 }
 
 unsigned int Image::width() const {
@@ -288,6 +291,7 @@ std::ostream& operator<<(std::ostream& os, const Image& dt) {
 			os << int(dt.m_data[i][j]) << " ";
 		}
 	}
+	os << "\n";
 	return os;
 }
 
