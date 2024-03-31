@@ -3,9 +3,11 @@
 #include "TestImage.h"
 #include "TestRectangle.h"
 #include "TestImageProcessing.h"
+#include "TestDrawing.h"
 
 void TestEverything() {
 	TestRectangle();
 	TestImage();
 	TestImageProcessing();
+	TestDrawing();
 }

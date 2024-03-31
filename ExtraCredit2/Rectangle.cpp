@@ -9,11 +9,11 @@ Rectangle::Rectangle() {
 Rectangle::Rectangle(int x, int y, int width, int height) {
 	this->x = x;
 	this->y = y;
-	if (height >= 0)
+	if (height > 0)
 		this->height = height;
 	else
 		this->height = 0;
-	if (width >= 0)
+	if (width > 0)
 		this->width = width;
 	else
 		this->width = 0;

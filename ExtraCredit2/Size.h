@@ -1,6 +1,9 @@
 #pragma once
+
 class Size {
+
 public:
+
 	Size();
 	Size(unsigned int width, unsigned int height);
 	unsigned int get_width() const;
@@ -12,6 +15,7 @@ public:
 	friend bool operator<(const Size& s1, const Size& s2);
 	friend bool operator>=(const Size& s1, const Size& s2);
 	friend bool operator>(const Size& s1, const Size& s2);
+
 private:
 	unsigned int width, height;
 };

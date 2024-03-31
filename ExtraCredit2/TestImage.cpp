@@ -173,6 +173,9 @@ void TestImageRoi() {
 	assert(i2.at(1, 1) == 2);
 	assert(i2.at(0, 2) == 3);
 	assert(i2.at(1, 2) == 3);
+
+	i1.getROI(i2, 0, 0, 0, 0);
+	assert(i2.width() == 0 && i2.height() == 0);
 }
 
 void TestImage() {
