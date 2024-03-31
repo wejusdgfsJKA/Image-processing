@@ -53,7 +53,7 @@ float ReadNumber(string o)
 void ImageOptions(Image& img) 
 {
 	Image tmp;
-	string img_commands = "\n1 - Display all commands.\n2 - Display current image.\n3 - Load from default input file.\n4 - Save to default output file.\n5 - Load from given file.\n6 - Save to given file.\n7 - Get ROI.\n0 - Exit.\n";
+	string img_commands = "\n1 - Display all commands.\n2 - Display current image.\n3 - Load from default input file (TestImage4.txt).\n4 - Save to default output file (Output1.ascii.pgm).\n5 - Load from given file.\n6 - Save to given file.\n7 - Get ROI.\n0 - Exit.\n";
 	int opt = 1;
 	cout << img_commands;
 	while (opt != 0) 
@@ -82,16 +82,18 @@ void ImageOptions(Image& img)
 		{
 			string s;
 			getline(cin, s);
-			if (tmp.load(s)) 
+			if (tmp.load(s))
 			{
 				img = tmp;
 			}
+			else throw invalid_argument("Invalid file!");
 		}
 		if (opt == 6)
 		{
 			string s;
 			getline(cin, s);
-			img.save(s);
+			bool b = img.save(s);
+			if (!b)throw invalid_argument("Invalid file!");
 		}
 		if (opt == 7) {
 			unsigned int x = unsigned int(ReadNumber("X: "));
@@ -252,7 +254,6 @@ void DrawOptions(Image& img)
 			int radius = int(ReadNumber("Radius: "));
 			unsigned int color = unsigned int(ReadNumber("Color: "));
 			draw.drawCircle(tmp, Point(x, y), radius, color);
-			cout << tmp;
 			tmp.save("Output2.ascii.pgm");
 		}
 
@@ -264,7 +265,6 @@ void DrawOptions(Image& img)
 			int y2 = int(ReadNumber("Y2: "));
 			unsigned int color = unsigned int(ReadNumber("Color: "));
 			draw.drawLine(tmp, Point(x1, y1), Point(x2,y2), color);
-			cout << tmp;
 			tmp.save("Output2.ascii.pgm");
 		}
 
@@ -276,7 +276,6 @@ void DrawOptions(Image& img)
 			int y2 = int(ReadNumber("Y2: "));
 			unsigned int color = unsigned int(ReadNumber("Color: "));
 			draw.drawRectangle(tmp, Point(x1, y1), Point(x2, y2), color);
-			cout << tmp;
 			tmp.save("Output2.ascii.pgm");
 		}
 	}
@@ -285,8 +284,6 @@ void DrawOptions(Image& img)
 int main() 
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-
-	TestEverything();
 
 	{
 		Image current{ 15,15 };
@@ -324,6 +321,8 @@ int main()
 			}
 		}
 	}
+
+	TestEverything();
 
 	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
 	_CrtDumpMemoryLeaks();
