@@ -3,6 +3,7 @@
 using std::cout;
 #define kwidth 3
 #define kheight 3
+
 ImageConvolution::ImageConvolution(ScaleFct scale, const int kernel[3][3]) {
 	this->scale = scale;
 	for (int i = 0; i < kheight; i++) {

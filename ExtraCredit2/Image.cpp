@@ -71,6 +71,7 @@ bool Image::load(string imagePath) {
 	
 	if (imagePath.length() == 0)return false;
 	std::ifstream file(imagePath);
+	if (!file.is_open())return false;
 	string str;
 	std::getline(file, str);
 
@@ -155,13 +156,16 @@ bool Image::load(string imagePath) {
 	}
 	if (!read_size || !read_intensity)return false;
 	*this = new_image;
+	file.close();
 	return true;
 }
 
 bool Image::save(string imagePath) const {
 	if (imagePath.length() == 0)return false;
 	std::ofstream file(imagePath);
+	if (!file.is_open())return false;
 	file << *this;
+	file.close();
 	return true;
 }
 

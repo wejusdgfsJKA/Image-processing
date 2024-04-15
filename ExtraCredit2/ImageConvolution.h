@@ -7,7 +7,7 @@ class ImageConvolution : public ImageProcessing {
 
 public:
 	ImageConvolution(ScaleFct scale, const int kernel[3][3]);
-	void process(const Image& src, Image& dst);
+	void process(const Image& src, Image& dst) override;
 
 private:
 	int kernel[3][3];
